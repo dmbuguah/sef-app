@@ -4,7 +4,9 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import PropTypes from 'prop-types'
 
-import {Map, Polyline, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
+import {
+    Map, Polyline, InfoWindow, Marker,
+    GoogleApiWrapper} from 'google-maps-react';
 import { compose } from 'recompose'
 import { withStyles } from '@material-ui/core/styles'
 import {withRouter } from 'react-router-dom'
@@ -19,7 +21,6 @@ import Box from '@material-ui/core/Box';
 import FormControl from '@material-ui/core/FormControl';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
-import TextField from '@material-ui/core/TextField';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 
@@ -118,15 +119,19 @@ class SearchFacility extends Component {
 
                     var facility_location = {...self.state.facility_location}
                     var keph_level = {...self.state.keph_level}
+                    var facility_owner = {...self.state.facility_owner}
 
                     facility_location.analysis_data = facilities['facility_location']['analysis_data']
                     facility_location.title = facilities['facility_location']['title']
+
                     keph_level = facilities['keph_levels']
+                    facility_owner = facilities['facility_owner']
 
                     self.setState(
                         {
                             facility_location: facility_location,
-                            keph_level: keph_level
+                            keph_level: keph_level,
+                            facility_owner: facility_owner
                         })
                 })
           })
@@ -194,7 +199,6 @@ class SearchFacility extends Component {
         height: '100%'
       };
       const { value } = this.state;
-
 
       const Markers = props => (
         this.state.facility_location.analysis_data.map((marker, index) =>
@@ -320,12 +324,15 @@ class SearchFacility extends Component {
                       <Select
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
-                        value={this.minute}
-                        onChange={this.handleMinuteChange}
+                        value={this.state.facility_owner_value}
+                        name="facility_owner_value"
+                        onChange={this.handleChange}
                       >
-                        <MenuItem value={10}>Ten</MenuItem>
-                        <MenuItem value={20}>Twenty</MenuItem>
-                        <MenuItem value={30}>Thirty</MenuItem>
+                      {
+                        this.state.facility_owner.map(v =>
+                          <MenuItem value={v.id}>{v.name}</MenuItem>
+                        )
+                      }
                       </Select>
                     </FormControl>
 

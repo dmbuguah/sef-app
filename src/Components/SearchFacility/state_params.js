@@ -17,6 +17,7 @@ const state_params = {
   operation_status_name: null,
   fkeph_level: null,
   keph_level_value: 'Select Level',
+  facility_owner_value: 'Select Facility Owner',
   fcounty_name: null,
   location_timeline: {
     title: null,
@@ -31,6 +32,7 @@ const state_params = {
     analysis_data: [],
   },
   keph_level: [],
+  facility_owner: [],
   tabValue: 0,
   minute: 0,
   route: [],
