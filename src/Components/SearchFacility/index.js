@@ -3,15 +3,6 @@ import React, { Component } from 'react'
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import PropTypes from 'prop-types'
-import {
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    Legend,
-    BarChart,
-    Bar, Label
-} from 'recharts';
 
 import {Map, Polyline, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
 import { compose } from 'recompose'
@@ -33,7 +24,6 @@ import DateFnsUtils from '@date-io/date-fns';
 import FormControl from '@material-ui/core/FormControl';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 
 import axios from 'axios';
 
@@ -287,59 +277,12 @@ TabPanelVertical.propTypes = {
   value: PropTypes.any.isRequired,
 }
 
-function a11yPropsVertical(index) {
-  return {
-    id: `vertical-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
-};
-
 class SearchFacility extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      casesId: null,
+      own_position: null,
       value: 0,
-      outgoing_calls_by_day: {
-          title: null,
-          x_axis: null,
-          y_axis: null,
-          analysis_data: null
-      },
-      incoming_calls_by_day: {
-          title: null,
-          x_axis: null,
-          y_axis: null,
-          analysis_data: null
-      },
-      calls_by_ctype: {
-          title: null,
-          x_axis: null,
-          y_axis: null,
-          analysis_data: null
-      },
-      sms_sent_by_day: {
-          title: null,
-          x_axis: null,
-          y_axis: null,
-          analysis_data: null
-      },
-      sms_received_by_day: {
-          title: null,
-          x_axis: null,
-          y_axis: null,
-          analysis_data: null
-      },
-      sms_by_type_date: {
-          title: null,
-          x_axis: null,
-          y_axis: null,
-          analysis_data: null
-      },
-      location_case: {
-        title: null,
-        analysis_data: [],
-      },
       dashboard_case: {
         sms: 0,
         call: 0,
@@ -361,45 +304,53 @@ class SearchFacility extends Component {
           outgoing_calls: []
         }
       },
-      r_sms_break_down: {
+      facility_location: {
         title: null,
-        analysis_data: []
-      },
-      s_sms_break_down: {
-        title: null,
-        analysis_data: []
-      },
-      i_calls_break_down: {
-        title: null,
-        analysis_data: []
+        analysis_data: [],
       },
       tabValue: 0,
-      user_received_sms: [],
-      user_sent_sms: [],
-      user_incoming_call: [],
       minute: 0,
-      user_conversation_timeline: {
-        title: null,
-        analysis_data: []
-      },
-      conv_timeline: [],
-      conv_type: null,
       route: [],
-      lat: 38.8810628,
-      lng: -77.11394929
+      lat: null,
+      lng: null
     }
   }
 
-  componentDidMount() {
+  componentDidMount(){
+      let self = this;
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
+
           var pos = {
             lat: position.coords.latitude,
             lng: position.coords.longitude
           };
-          console.log(pos)
-      });
-    };
+
+          self.setState({
+              own_position: pos,
+              lat: pos.lat,
+              lng: pos.lng
+          },() => {
+            axios.get(
+                `http://127.0.0.1:8000/v1/facility/facilities/facilities_near_me/`, {
+                  params: {
+                      ...self.state.own_position
+                  },
+                  headers: {
+                    'Content-Type': 'application/json'
+                  }
+                }).then((response) => {
+                    const facilities = response.data;
+
+                    var facility_location = {...self.state.facility_location}
+                    facility_location.analysis_data = facilities['facility_location']['analysis_data']
+                    facility_location.title = facilities['facility_location']['title']
+
+                    self.setState({facility_location: facility_location})
+                })
+          })
+        })
+    }
   }
   handleChange = (event, newValue) => {
      this.setState({value:newValue})
@@ -500,7 +451,7 @@ class SearchFacility extends Component {
 
 
       const Markers = props => (
-        this.state.location_case.analysis_data.map((marker, index) =>
+        this.state.facility_location.analysis_data.map((marker, index) =>
           <Marker
             {...props}
             key={index}
@@ -575,111 +526,6 @@ class SearchFacility extends Component {
         <div>
           <PhoneOutlinedIcon fontSize="large" />
         </div>
-      )
-
-      const TabWrapper = props => (
-        this.state.r_sms_break_down.analysis_data.map((sms, index) =>
-          <Tab
-            label={<><div><AccountCircleIcon style={{verticalAlign: 'middle'}}/> {sms['user']}</div></>}
-            key={index}
-            onChange= {() =>
-              this.setState({user_received_sms: sms['sms']})
-            }
-            {...a11yPropsVertical(index)} />
-        )
-      )
-
-      const TabWrapperIncomingCall = props => (
-        this.state.i_calls_break_down.analysis_data.map((call, index) =>
-          <Tab
-            label={<><div><AccountCircleIcon style={{verticalAlign: 'middle'}}/> {call['user']}</div></>}
-            key={index}
-            onChange= {() =>
-              this.setState({user_incoming_call: call['call']})
-            }
-            {...a11yPropsVertical(index)} />
-        )
-      )
-
-      const TabPanelVerticalWrapperIncomingCall = props => (
-            <TabPanelVertical
-              key={this.state.tabValue}
-              className={classes.tabPanelVerticalDiv}
-              value={this.state.tabValue} index={this.state.tabValue}>
-
-              {this.state.user_incoming_call.length === 0 ?
-                  <div className={classes.noResult}>
-                    Click conversation bar for breakdown
-                    </div>: <span></span>
-              }
-
-              {this.state.user_incoming_call.map((call, index) =>
-                  <div
-                    key={btoa(Math.random()).substring(0,12)}
-                    className={classes.smsDivWrapper}>
-                    <div
-                      key={btoa(Math.random()).substring(0,12)}
-                      className={classes.smsDiv}>
-                      <div key={btoa(Math.random()).substring(0,12)}>
-                        <span
-                          className={classes.titleCallAnalysis}
-                          key={btoa(Math.random()).substring(0,12)}>
-                          Country Code
-                          <span className={classes.cCodeSemi}>:</span>
-                        </span>
-                        <span key={btoa(Math.random()).substring(0,12)}>{call['country_code']}</span>
-                      </div>
-                      <div key={btoa(Math.random()).substring(0,12)}>
-                        <span
-                          className={classes.titleCallAnalysis}
-                          key={btoa(Math.random()).substring(0,12)}>Duration
-                          <span className={classes.durationSemi}>:</span>
-                        </span>
-                        <span key={btoa(Math.random()).substring(0,12)}>{call['cduration']} sec</span>
-                      </div>
-                      <div key={btoa(Math.random()).substring(0,12)}>
-                      <span
-                        className={classes.titleCallAnalysis}
-                        key={btoa(Math.random()).substring(0,12)}>Date
-                        <span className={classes.dateSemi}>:</span>
-                      </span>
-                      <span key={btoa(Math.random()).substring(0,12)}>
-                        {call['date_called']}
-                      </span>
-                      </div>
-                    </div>
-                  </div>
-              )}
-            </TabPanelVertical>
-      )
-
-      const TabPanelVerticalWrapper = props => (
-            <TabPanelVertical
-              key={this.state.tabValue}
-              className={classes.tabPanelVerticalDiv}
-              value={this.state.tabValue} index={this.state.tabValue}>
-
-              {this.state.user_received_sms.length === 0 ?
-                  <div className={classes.noResult}>
-                    Click conversation bar for breakdown
-                    </div>: <span></span>
-              }
-
-              {this.state.user_received_sms.map((sms, index) =>
-                  <div
-                    key={btoa(Math.random()).substring(0,12)}
-                    className={classes.smsDivWrapper}>
-                    <div
-                      key={btoa(Math.random()).substring(0,12)}
-                      className={classes.smsDiv}>
-                      {sms['body']}
-                    </div>
-                    <div
-                      key={btoa(Math.random()).substring(0,12)}
-                      className={classes.drDiv}>{sms['date_received']}</div>
-                  </div>
-              )}
-            </TabPanelVertical>
       )
 
       return (
@@ -758,8 +604,9 @@ class SearchFacility extends Component {
               <Grid item xs={8}>
                 <Paper className={classes.paper}>
                  <div>
+
                    <div className={classes.caseGrid}>
-                     {this.state.location_case.title}
+                     {this.state.facility_location.title}
                      <hr className={classes.hr}/>
                    </div>
                  </div>
