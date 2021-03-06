@@ -16,217 +16,16 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
-} from '@material-ui/pickers';
-import DateFnsUtils from '@date-io/date-fns';
 import FormControl from '@material-ui/core/FormControl';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
+import TextField from '@material-ui/core/TextField';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 
 import axios from 'axios';
-
-
-const styles = theme => ({
-  root: {
-    flexGrow: 1,
-  },
-  caseGrid: {
-    padding: "4px",
-    marginLeft: "14px",
-    fontSize: "1.2rem",
-    fontWeight: "400",
-    color: "#999"
-  },
-  hr : {
-    border: "0.6px solid #ddd",
-    // marginTop: "90px"
-  },
-  hr1 : {
-    border: "0.6px solid #ddd",
-    marginTop: "90px"
-  },
-  maps: {
-    padding: "10px",
-    width: "100%",
-    height: "100%"
-  },
-  paper: {
-    padding: "10px",
-    height: "100%"
-  },
-  extractIcon: {
-    marginTop: "-23px",
-    width: "65px",
-    height: "65px",
-    background: "#1abdd1",
-    display: "flex",
-    justifyContent: "center",
-    borderRadius: "3px",
-    float: "left"
-  },
-  innerExtractIcon: {
-    height: "fit-content",
-    width: "fit-content",
-    marginTop: "14px"
-  },
-  header4: {
-    fontSize: "2.125rem",
-    textAlign: "left",
-    paddingLeft: "10px"
-  },
-  extractDetailInfo: {
-    float: "right"
-  },
-  encloseExtract: {
-  },
-  extractHeader: {
-    fontSize: "14px",
-    color: "#999",
-    fontFamily: "Roboto,Helvetica,Arial,sans-serif"
-  },
-  extractInnerHeader: {
-    lineHeight: "1"
-  },
-  gridWrapper: {
-    marginBottom: "20px"
-  },
-  appBar: {
-    background: "#1abdd1",
-    color: "black"
-  },
-  extractDescription: {
-    color: "#999"
-  },
-  datePicker: {
-    float: "right",
-    marginLeft: "20px"
-  },
-  datePickerOutLine: {
-    display: "flow-root",
-    padding: "10px"
-  },
-  locationTitle: {
-    fontSize: "14px",
-    fontWeight: 500,
-    color: "#333"
-  },
-  locationBTitle: {
-    fontSize: "13px"
-  },
-  sentRecipient: {
-    fontSize: "12px",
-    color: "#999",
-  },
-  dateSent: {
-    fontSize: "14px",
-    color: "#999",
-  },
-  sentMsg: {
-    border: "1px solid #999",
-    padding: "10px",
-    borderRadius: "10px",
-    marginLeft: "10px",
-    width: "-webkit-fill-available"
-  },
-  sentTitle: {
-    fontSize: "14px",
-    color: "#333"
-  },
-  encloseSent: {
-    display: "flex",
-    marginBottom: "3px"
-  },
-  sentInnerDiv: {
-    marginLeft: "10px"
-  },
-  verticalTab: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.paper,
-    display: 'flex',
-    height: 224,
-  },
-  verticalTabConTimeLine: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.paper,
-    display: 'flex',
-    height: 400,
-  },
-  tabs: {
-    borderRight: `1px solid ${theme.palette.divider}`,
-    overflow: "unset"
-  },
-  smsDivWrapper: {
-    marginBottom: "15px"
-  },
-  smsDiv: {
-    background: "#efe1e1",
-    padding: "5px",
-    borderRadius: "5px"
-  },
-  drDiv: {
-    fontSize: "12px",
-    textAlign: "right"
-  },
-  tabPanelVerticalDiv: {
-    width: "-webkit-fill-available",
-    overflowY: "scroll"
-  },
-  noResult: {
-    textAlign: "center",
-    fontSize: "20px",
-    padding: "15%"
-  },
-  minDev: {
-    float: "right",
-    padding: "15px"
-  },
-  inbox: {
-    backgroundColor: "antiquewhite",
-    margin: "10px",
-    width: "350px",
-    float: "left",
-    padding: "8px",
-    borderRadius: "8px"
-  },
-  sent: {
-    backgroundColor: "antiquewhite",
-    margin: "10px",
-    width: "350px",
-    float: "right",
-    padding: "8px",
-    borderRadius: "8px"
-  },
-  incoming: {
-    backgroundColor: "antiquewhite",
-    margin: "10px",
-    padding: "8px",
-    borderRadius: "8px",
-    width: "100%",
-    display: "flow-root"
-  },
-  convDate: {
-    textAlign: "right",
-    fontSize: "small"
-  },
-  convLocation: {
-    textAlign: "right",
-    fontSize: "small"
-  },
-  cCodeSemi: {
-    marginLeft: "18px"
-  },
-  durationSemi: {
-    marginLeft: "55px"
-  },
-  dateSemi: {
-    marginLeft: "83px"
-  },
-  titleCallAnalysis: {
-    fontWeight: "bold"
-  }
-})
+import { styles } from './styles'
+import { state_params } from './state_params'
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -280,41 +79,15 @@ TabPanelVertical.propTypes = {
 class SearchFacility extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      own_position: null,
-      value: 0,
-      dashboard_case: {
-        sms: 0,
-        call: 0,
-        location: 0
-      },
-      selectedPlace: {},
-      activeMarker: {},
-      showingInfoWindow: true,
-      facility_name: null,
-      ftype: null,
-      fowner_name: null,
-      operation_status_name: null,
-      fkeph_level: null,
-      fcounty_name: null,
-      location_timeline: {
-        title: null,
-        analysis_data: {
-          messages: [],
-          incoming_calls: [],
-          outgoing_calls: []
-        }
-      },
-      facility_location: {
-        title: null,
-        analysis_data: [],
-      },
-      tabValue: 0,
-      minute: 0,
-      route: [],
-      lat: null,
-      lng: null
-    }
+
+    this.state = state_params
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange = (event) =>{
+    let nam = event.target.name;
+    let val = event.target.value;
+    this.setState({[nam]: val});
   }
 
   componentDidMount(){
@@ -344,27 +117,22 @@ class SearchFacility extends Component {
                     const facilities = response.data;
 
                     var facility_location = {...self.state.facility_location}
+                    var keph_level = {...self.state.keph_level}
+
                     facility_location.analysis_data = facilities['facility_location']['analysis_data']
                     facility_location.title = facilities['facility_location']['title']
+                    keph_level = facilities['keph_levels']
 
-                    self.setState({facility_location: facility_location})
+                    self.setState(
+                        {
+                            facility_location: facility_location,
+                            keph_level: keph_level
+                        })
                 })
           })
         })
     }
   }
-  handleChange = (event, newValue) => {
-     this.setState({value:newValue})
-  };
-
-  tabHandleChange = (event, newValue) => {
-     this.setState({tabValue:newValue})
-  };
-
-  handleFromDateChange = (date) => {
-    this.setState({selectedFromDate:date})
-  };
-
 
   onMarkerClick = (props, marker, e) => {
     console.log(props)
@@ -383,14 +151,6 @@ class SearchFacility extends Component {
     });
   }
 
-  onMapClicked = (props) => {
-    if (this.state.showingInfoWindow) {
-      this.setState({
-        showingInfoWindow: false,
-        activeMarker: null
-      })
-    }
-  };
   calculateDistance = (source, des) => {
         const { google } = this.props;
         const DirectionsService = new google.maps.DirectionsService();
@@ -401,20 +161,19 @@ class SearchFacility extends Component {
         }, (result, status) => {
             if (status === google.maps.DirectionsStatus.OK) {
                 this.setState({
-                    route: result.routes[0].overview_path.map(p => {return {lat:p.lat() , lng:p.lng()}})
+                    route: result.routes[0].overview_path.map(p => {
+                      return {lat:p.lat() , lng:p.lng()}})
                 });
             }
             if (status === google.maps.GeocoderStatus.OVER_QUERY_LIMIT) {
               setTimeout(3000);
             }
             else {
-
                 console.error(`error fetching directions ${result}`);
                 console.log(result)
             }
         });
     }
-
 
   a11yProps(index) {
     return {
@@ -452,71 +211,7 @@ class SearchFacility extends Component {
             onClick={this.onMarkerClick}
             position={{lat: marker.lat, lng: marker.lng}}
            />)
-         )
-
-      const Sent = props => (
-          this.state.location_timeline.analysis_data.messages.map((sms, index) =>
-            <div
-              key={btoa(Math.random()).substring(0,12)}
-              className={classes.encloseSingleSent}>
-                  { index >= 1 && <hr className={classes.hr}/>}
-                  <div key={btoa(Math.random()).substring(0,12)}>
-                    <div
-                      key={btoa(Math.random()).substring(0,12)}
-                      className={classes.sentTitle}>
-                      { sms.date_sent? <span> To </span> : <span> From </span>}
-                    </div>
-                    <div
-                    key={btoa(Math.random()).substring(0,12)}
-                    className={classes.sentRecipient}>
-                      {sms.recipient || sms.sender || '+12027252124'}
-                    </div>
-                  </div>
-                  <div key={btoa(Math.random()).substring(0,12)}>
-                    <div
-                    key={btoa(Math.random()).substring(0,12)}
-                    className={classes.sentTitle}> Date </div>
-                    <div
-                    key={btoa(Math.random()).substring(0,12)}
-                    className={classes.dateSent}>
-                      {sms.date_sent || sms.date_received}
-                    </div>
-                  </div>
-            </div>
-          )
-        )
-
-      const IncomingCalls = props => (
-          this.state.location_timeline.analysis_data.incoming_calls.map((calls, index) =>
-            <div className={classes.encloseSingleSent}>
-                  { index >= 1 && <hr className={classes.hr}/>}
-                  <div>
-                    <div className={classes.sentTitle}>
-                      { calls.ctype === 'outgoing' ? <span> To </span> : <span> From </span>}
-                      </div>
-                    <div className={classes.sentRecipient}>
-                      { calls.ctype === 'outgoing' ? 'Subject' : calls.cfrom }
-                      </div>
-                  </div>
-                  <div>
-                    <div className={classes.sentTitle}> Date </div>
-                    <div className={classes.dateSent}>{calls.date_called}</div>
-                  </div>
-            </div>
-          )
-        )
-
-      const SentIcon = props => (
-        <div>
-          <MessageIcon fontSize="large" />
-        </div>
-      )
-
-      const CallIcon = props => (
-        <div>
-          <PhoneOutlinedIcon fontSize="large" />
-        </div>
-      )
+         );
 
       return (
         <div className={classes.root}>
@@ -591,7 +286,7 @@ class SearchFacility extends Component {
           value={value} index={0}>
           <div className={classes.root}>
             <Grid container spacing={3}>
-              <Grid item xs={8}>
+              <Grid item xs={9}>
                 <Paper className={classes.paper}>
                  <div>
 
@@ -600,46 +295,62 @@ class SearchFacility extends Component {
                      <hr className={classes.hr}/>
                    </div>
                  </div>
-                 <div className={classes.datePickerOutLine}>
-                   <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                   <div className={classes.datePicker}>
-                     <KeyboardDatePicker
-                       disableToolbar
-                       variant="inline"
-                       format="MM/dd/yyyy"
-                       margin="normal"
-                       id="date-picker-to"
-                       label="To"
-                       value={this.state.selectedToDate}
-                       onChange={this.handleToDateChange}
-                       KeyboardButtonProps={{
-                         'aria-label': 'change date',
-                       }}/>
-                    </div>
-                    <div className={classes.datePicker}>
-                     <KeyboardDatePicker
-                       disableToolbar
-                       variant="inline"
-                       format="MM/dd/yyyy"
-                       margin="normal"
-                       id="date-picker-from"
-                       label="From"
-                       value={this.state.selectedFromDate}
-                       onChange={this.handleFromDateChange}
-                       KeyboardButtonProps={{
-                         'aria-label': 'change date',
-                       }}/>
-                     </div>
-                   </MuiPickersUtilsProvider>
-                   <div className={classes.minDev}>
-                   <FormControl>
-                       <InputLabel htmlFor="radius">Radius in (KM)</InputLabel>
-                       <Input id="radius"
+                 <div className={classes.facilityFilterOutLine}>
+                   <div>
+                     <div className={classes.facilityType}>
+                     <FormControl className={classes.formControl}>
+                      <InputLabel id="demo-simple-select-label">Keph Level</InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        name="keph_level_value"
+                        value={this.state.keph_level_value}
+                        onChange={this.handleChange}
+                      >
+                      {
+                        this.state.keph_level.map(v =>
+                          <MenuItem value={v.id}>{v.name}</MenuItem>
+                        )
+                      }
+                      </Select>
+                    </FormControl>
+
+                     <FormControl className={classes.formControl}>
+                      <InputLabel id="demo-simple-select-label">Facility Owner</InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
                         value={this.minute}
-                        type="number"
-                        defaultValue={this.minute}
-                        onChange={this.handleMinuteChange} />
-                     </FormControl>
+                        onChange={this.handleMinuteChange}
+                      >
+                        <MenuItem value={10}>Ten</MenuItem>
+                        <MenuItem value={20}>Twenty</MenuItem>
+                        <MenuItem value={30}>Thirty</MenuItem>
+                      </Select>
+                    </FormControl>
+
+                       <FormControl className={classes.formControl}>
+                        <InputLabel id="demo-simple-select-label">Facility Type</InputLabel>
+                        <Select
+                          labelId="demo-simple-select-label"
+                          id="demo-simple-select"
+                          value={this.minute}
+                          onChange={this.handleMinuteChange}
+                        >
+                          <MenuItem value={10}>Ten</MenuItem>
+                          <MenuItem value={20}>Twenty</MenuItem>
+                          <MenuItem value={30}>Thirty</MenuItem>
+                        </Select>
+                      </FormControl>
+                     <FormControl>
+                         <InputLabel htmlFor="radius">Radius in (KM)</InputLabel>
+                         <Input id="radius"
+                          value={this.minute}
+                          type="number"
+                          defaultValue={this.minute}
+                          onChange={this.handleMinuteChange} />
+                       </FormControl>
+                      </div>
                    </div>
                  </div>
                  <div
@@ -648,7 +359,6 @@ class SearchFacility extends Component {
                  <Map
                      key={btoa(Math.random()).substring(0,12)}
                      google={this.props.google}
-                     onClick={this.onMapClicked}
                      initialCenter={{
                          lat: this.state.lat,
                          lng: this.state.lng,
@@ -675,7 +385,7 @@ class SearchFacility extends Component {
                    </div>
                 </Paper>
               </Grid>
-              <Grid item xs={4}>
+              <Grid item xs={3}>
               <Paper className={classes.paper}>
                 <div>
                   <div className={classes.caseGrid}>
@@ -698,32 +408,6 @@ class SearchFacility extends Component {
                       <p className={classes.locationBTitle}>
                         {this.state.fowner_name ? this.state.fowner_name: '-'}
                       </p>
-                    </div>
-                    <div className={classes.encloseSent}>
-                      { this.state.location_timeline.analysis_data.messages.length > 0 ?
-                          <SentIcon/> : <span></span>
-                      }
-
-                      {
-                          this.state.location_timeline.analysis_data.messages.length >0  &&
-                          <div
-                            className={classes.sentMsg} key={btoa(Math.random()).substring(0,12)}>
-                            <Sent/>
-                          </div>
-                      }
-                    </div>
-
-                    <div className={classes.encloseSent}>
-                      { this.state.location_timeline.analysis_data.incoming_calls.length > 0 ?
-                          <CallIcon/> : <span></span>
-                      }
-
-                      {
-                          this.state.location_timeline.analysis_data.incoming_calls.length > 0  ?
-                          <div className={classes.sentMsg}>
-                            <IncomingCalls/>
-                          </div>: <span></span>
-                      }
                     </div>
                   </div>
                 </div>
