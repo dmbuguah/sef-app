@@ -1,0 +1,21 @@
+main.Layout-content-5 div ol li{
+    display: inline-block;
+    text-align: center;
+    line-height: 4.1rem;
+    padding: 0 0.7rem;
+    cursor: pointer;
+    width: 31rem;
+}
+
+main.Layout-content-5 div ol {
+  padding-left: 0.5rem
+}
+
+.multi-container div div div form div.MuiFormControl-root {
+    min-width: 100%;
+    padding-right: 10px;
+}
+
+.multi-container {
+  min-height: 320px
+}
