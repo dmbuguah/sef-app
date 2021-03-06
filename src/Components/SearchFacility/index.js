@@ -288,14 +288,15 @@ class SearchFacility extends Component {
         call: 0,
         location: 0
       },
-      selectedToDate: new Date('2012-07-18T21:11:54'),
-      selectedFromDate: new Date('2012-07-18T21:11:54'),
       selectedPlace: {},
       activeMarker: {},
       showingInfoWindow: true,
-      title: null,
-      address: null,
-      timestamp: null,
+      facility_name: null,
+      ftype: null,
+      fowner_name: null,
+      operation_status_name: null,
+      fkeph_level: null,
+      fcounty_name: null,
       location_timeline: {
         title: null,
         analysis_data: {
@@ -366,34 +367,20 @@ class SearchFacility extends Component {
 
 
   onMarkerClick = (props, marker, e) => {
-    var mydate = new Date(marker.timestamp);
     console.log(props)
     this.setState({
       selectedPlace: props,
       activeMarker: marker,
       showingInfoWindow: true,
-      title: marker.aplace,
-      address: marker.address,
-      timestamp: mydate.toString(),
+      facility_name: marker.fname,
+      ftype: marker.ftype,
+      fowner_name: marker.fowner_name,
+      operation_status_name: marker.operation_status_name,
+      fkeph_level: marker.keph_level,
+      fcounty_name: marker.county_name,
       lat: props.position.lat,
       lng: props.position.lng
     });
-
-    axios.get(
-        `http://127.0.0.1:8000/v1/case/cases/marker_analysis/`, {
-          params: {
-              locationId: marker.id
-          },
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }).then((response) => {
-            const cases = response.data;
-
-            var location_timeline = {...this.state.location_timeline}
-            location_timeline.analysis_data = cases['location_timeline']['analysis_data']
-            this.setState({location_timeline: location_timeline})
-        })
   }
 
   onMapClicked = (props) => {
@@ -456,9 +443,12 @@ class SearchFacility extends Component {
             {...props}
             key={index}
             id={marker.id}
-            address={marker.address}
-            aplace={marker.place}
-            timestamp={marker.timestamp}
+            fname={marker.facility_name}
+            ftype={marker.facility_type}
+            fowner_name={marker.owner_name}
+            operation_status_name={marker.operation_status_name}
+            fkeph_level={marker.keph_level}
+            fcounty_name={marker.county_name}
             onClick={this.onMarkerClick}
             position={{lat: marker.lat, lng: marker.lng}}
            />)
@@ -689,24 +679,24 @@ class SearchFacility extends Component {
               <Paper className={classes.paper}>
                 <div>
                   <div className={classes.caseGrid}>
-                    Case Timeline
+                    Facility Timeline
                     <hr className={classes.hr}/>
                     <div>
-                      <p className={classes.locationTitle}> Place Name</p>
+                      <p className={classes.locationTitle}> Facility Name</p>
                       <p className={classes.locationBTitle}>
-                        {this.state.title ? this.state.title: '-'}
+                        {this.state.facility_name ? this.state.facility_name: '-'}
                       </p>
                     </div>
                     <div>
-                      <p className={classes.locationTitle}> Place Address</p>
+                      <p className={classes.locationTitle}> Facility Type</p>
                       <p className={classes.locationBTitle}>
-                        {this.state.address ? this.state.address: '-'}
+                        {this.state.ftype ? this.state.ftype: '-'}
                       </p>
                     </div>
                     <div>
-                      <p className={classes.locationTitle}> Date</p>
+                      <p className={classes.locationTitle}> Facility Owner</p>
                       <p className={classes.locationBTitle}>
-                        {this.state.timestamp ? this.state.timestamp: '-'}
+                        {this.state.fowner_name ? this.state.fowner_name: '-'}
                       </p>
                     </div>
                     <div className={classes.encloseSent}>
