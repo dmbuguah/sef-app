@@ -36,7 +36,8 @@ const state_params = {
   facility_types: [],
   facility_type_input: null,
   radius: '',
-  distance: ''
+  distance: '',
+  duration: ''
 }
 
 export { state_params }
