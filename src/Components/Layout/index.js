@@ -4,15 +4,12 @@ import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import Menu from '@material-ui/core/Menu';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
-import AccountCircle from '@material-ui/icons/AccountCircle';
-import IconButton from '@material-ui/core/IconButton';
 import { Link, withRouter } from 'react-router-dom'
 import { MenuList, MenuItem } from '@material-ui/core'
 import { compose } from 'recompose'
 import { withStyles } from '@material-ui/core/styles'
-import CreateIcon from '@material-ui/icons/Create';
+import SearchIcon from '@material-ui/icons/Search';
 
 
 const drawerWidth = 240;
@@ -77,7 +74,6 @@ class Layout extends Component {
   render() {
     const { classes, location: { pathname }, children } = this.props
     const { anchorEl } = this.state;
-    const open = Boolean(anchorEl);
 
     return <Fragment>
       <div className={classes.root}>
@@ -85,37 +81,8 @@ class Layout extends Component {
         <AppBar position="fixed" className={classes.appBar}>
           <Toolbar>
             <Typography component="div" variant="h6">
-              SeF App
+              SeF App (Search Facility Near Me)
             </Typography>
-            <Typography style={{ flex: 1 }} component="div">
-            <div className={classes.account}>
-              <IconButton
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={this.handleMenu}
-                color="inherit">
-              <AccountCircle />
-              </IconButton>
-              <Menu
-                id="menu-appbar"
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                open={open}
-                onClose={this.handleClose}>
-                <MenuItem onClick={this.handleClose}>Profile</MenuItem>
-                <MenuItem onClick={this.handleClose}>My account</MenuItem>
-                </Menu>
-              </div>
-              </Typography>
           </Toolbar>
         </AppBar>
         <Drawer
@@ -127,9 +94,10 @@ class Layout extends Component {
         >
           <div className={classes.toolbar} />
           <MenuList>
-            <MenuItem component={Link} to="/" selected={'/' === pathname} className={classes.menuLink}>
+            <MenuItem component={Link} to="/" selected={'/' === pathname}
+              className={classes.menuLink}>
               <ListItemIcon>
-                <CreateIcon fontSize="small" />
+                <SearchIcon fontSize="small" />
               </ListItemIcon>
               <span> Search Facility </span>
             </MenuItem>
