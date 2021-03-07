@@ -1,13 +1,6 @@
-import React from 'react'
-
 const state_params = {
   own_position: null,
   value: 0,
-  dashboard_case: {
-    sms: 0,
-    call: 0,
-    location: 0
-  },
   selectedPlace: {},
   activeMarker: {},
   showingInfoWindow: true,
@@ -18,6 +11,7 @@ const state_params = {
   fkeph_level: null,
   keph_level_value: 'Select Level',
   facility_owner_value: 'Select Facility Owner',
+  facility_type_value: 'Select Facility Owner',
   fcounty_name: null,
   location_timeline: {
     title: null,
@@ -33,13 +27,15 @@ const state_params = {
   },
   keph_level: [],
   facility_owner: [],
+  facility_type: [],
   tabValue: 0,
   minute: 0,
   route: [],
   lat: null,
   lng: null,
   facility_types: [],
-  facility_type_input: null
+  facility_type_input: null,
+  radius: ''
 }
 
 export { state_params }

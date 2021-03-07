@@ -1,5 +1,3 @@
-import React from 'react'
-
 const styles = theme => ({
   root: {
     flexGrow: 1,
@@ -25,7 +23,8 @@ const styles = theme => ({
   },
   paper: {
     padding: "10px",
-    height: "100%"
+    height: "100%",
+    boxShadow: "unset"
   },
   extractIcon: {
     marginTop: "-23px",
@@ -88,8 +87,11 @@ const styles = theme => ({
     padding: "15px"
   },
   formControl: {
-    minWidth: "190px",
+    width: "-webkit-fill-available",
     marginRight: "5px"
+  },
+  searchButton: {
+    marginBottom: "-32px"
   }
 })
 
