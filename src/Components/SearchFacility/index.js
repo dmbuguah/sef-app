@@ -150,11 +150,18 @@ class SearchFacility extends Component {
       ftype: marker.ftype,
       fowner_name: marker.fowner_name,
       operation_status_name: marker.operation_status_name,
-      fkeph_level: marker.keph_level,
-      fcounty_name: marker.county_name,
+      fkeph_level: marker.fkeph_level,
+      fcounty_name: marker.fcounty_name,
       lat: props.position.lat,
       lng: props.position.lng
     });
+
+    console.log(this.state.own_position)
+    console.log(props.position.lat)
+    console.log(props.position.lng)
+
+    this.calculateDistance(
+        this.state.own_position, props.position, props.position)
   }
 
   calculateDistance = (source, des) => {
@@ -167,6 +174,7 @@ class SearchFacility extends Component {
         }, (result, status) => {
             if (status === google.maps.DirectionsStatus.OK) {
                 this.setState({
+                    distance: result.routes[0].legs[0].distance.text,
                     route: result.routes[0].overview_path.map(p => {
                       return {lat:p.lat() , lng:p.lng()}})
                 });
@@ -190,6 +198,7 @@ class SearchFacility extends Component {
 
   searchFacility = () => {
     let self = this;
+    self.state.route = '';
     axios.get(
         `http://127.0.0.1:8000/v1/facility/facilities/search_facilities/`, {
           params: {
@@ -380,7 +389,7 @@ class SearchFacility extends Component {
                            marker={this.state.activeMarker}
                            visible={this.state.showingInfoWindow}>
                              <div>
-                               <p>{this.state.title}</p>
+                               <p>{this.state.facility_name}</p>
                              </div>
                          </InfoWindow>
                    </Map>
@@ -409,6 +418,24 @@ class SearchFacility extends Component {
                       <p className={classes.locationTitle}> Facility Owner</p>
                       <p className={classes.locationBTitle}>
                         {this.state.fowner_name ? this.state.fowner_name: '-'}
+                      </p>
+                    </div>
+                    <div>
+                      <p className={classes.locationTitle}> Facility Level</p>
+                      <p className={classes.locationBTitle}>
+                        {this.state.fkeph_level ? this.state.fkeph_level: '-'}
+                      </p>
+                    </div>
+                    <div>
+                      <p className={classes.locationTitle}> County</p>
+                      <p className={classes.locationBTitle}>
+                        {this.state.fcounty_name ? this.state.fcounty_name: '-'}
+                      </p>
+                    </div>
+                    <div>
+                      <p className={classes.locationTitle}> Distance From Current Location</p>
+                      <p className={classes.locationBTitle}>
+                        {this.state.distance ? this.state.distance: '-'}
                       </p>
                     </div>
                   </div>
