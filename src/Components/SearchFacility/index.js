@@ -10,9 +10,6 @@ import {
 import { compose } from 'recompose'
 import { withStyles } from '@material-ui/core/styles'
 import {withRouter } from 'react-router-dom'
-import MessageIcon from '@material-ui/icons/Message';
-import PhoneOutlinedIcon from '@material-ui/icons/PhoneOutlined';
-import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -23,6 +20,7 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
+import Button from '@material-ui/core/Button';
 
 import axios from 'axios';
 import { styles } from './styles'
@@ -120,18 +118,21 @@ class SearchFacility extends Component {
                     var facility_location = {...self.state.facility_location}
                     var keph_level = {...self.state.keph_level}
                     var facility_owner = {...self.state.facility_owner}
+                    var facility_type = {...self.state.facility_type}
 
                     facility_location.analysis_data = facilities['facility_location']['analysis_data']
                     facility_location.title = facilities['facility_location']['title']
 
                     keph_level = facilities['keph_levels']
                     facility_owner = facilities['facility_owner']
+                    facility_type = facilities['facility_type']
 
                     self.setState(
                         {
                             facility_location: facility_location,
                             keph_level: keph_level,
-                            facility_owner: facility_owner
+                            facility_owner: facility_owner,
+                            facility_type: facility_type
                         })
                 })
           })
@@ -187,6 +188,35 @@ class SearchFacility extends Component {
     };
   }
 
+  searchFacility = () => {
+    let self = this;
+    axios.get(
+        `http://127.0.0.1:8000/v1/facility/facilities/search_facilities/`, {
+          params: {
+            'lat': self.state.own_position['lat'],
+            'lng': self.state.own_position['lng'],
+            'facility_type_value': self.state.facility_type_value,
+            'keph_level_value': self.state.keph_level_value,
+            'facility_owner_value': self.state.facility_owner_value,
+            'radius': self.state.radius
+          },
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }).then((response) => {
+            const facilities = response.data;
+            var facility_location = {...self.state.facility_location}
+
+            facility_location.analysis_data = facilities['facility_location']['analysis_data']
+            facility_location.title = facilities['facility_location']['title']
+
+            self.setState(
+                {
+                    facility_location: facility_location,
+                })
+        })
+  }
+
   render() {
       const { classes } = this.props
       const style = {
@@ -219,67 +249,6 @@ class SearchFacility extends Component {
 
       return (
         <div className={classes.root}>
-        <div className={classes.gridWrapper}>
-          <Grid container spacing={3}>
-            <Grid item xs={4}>
-              <Paper className={classes.paper}>
-                <div className={classes.encloseExtract}>
-                  <div className={classes.extractIcon}>
-                      <div className={classes.innerExtractIcon}>
-                        <MessageIcon fontSize="large" />
-                      </div>
-                  </div>
-                  <div className={classes.extractDetailInfo}>
-                    <p className={classes.extractHeader}>Messages</p>
-                    <h6 className={classes.extractInnerHeader}>{this.state.dashboard_case.sms}</h6>
-                  </div>
-                </div>
-                <hr className={classes.hr1}/>
-                <div className={classes.extractDescription}>
-                  Message Information
-                </div>
-              </Paper>
-            </Grid>
-            <Grid item xs={4}>
-              <Paper className={classes.paper}>
-                <div className={classes.encloseExtract}>
-                    <div className={classes.extractIcon}>
-                        <div className={classes.innerExtractIcon}>
-                          <PhoneOutlinedIcon fontSize="large" />
-                        </div>
-                    </div>
-                    <div className={classes.extractDetailInfo}>
-                        <p className={classes.extractHeader}>Call Logs</p>
-                        <h6 className={classes.extractInnerHeader}>{this.state.dashboard_case.call}</h6>
-                    </div>
-                  </div>
-                  <hr className={classes.hr1}/>
-                  <div className={classes.extractDescription}>
-                    Calls Information
-                  </div>
-              </Paper>
-            </Grid>
-            <Grid item xs={4}>
-              <Paper className={classes.paper}>
-                <div className={classes.encloseExtract}>
-                  <div className={classes.extractIcon}>
-                      <div className={classes.innerExtractIcon}>
-                        <LocationOnOutlinedIcon fontSize="large" />
-                      </div>
-                  </div>
-                  <div className={classes.extractDetailInfo}>
-                      <p className={classes.extractHeader}>Location</p>
-                      <h6 className={classes.extractInnerHeader}>{this.state.dashboard_case.location}</h6>
-                  </div>
-                </div>
-                <hr className={classes.hr1}/>
-                <div className={classes.extractDescription}>
-                  Location Information
-                </div>
-              </Paper>
-            </Grid>
-          </Grid>
-        </div>
         <AppBar position="static" className={classes.appBar}>
           <Tabs value={value} onChange={this.handleChange} aria-label="simple tabs example">
             <Tab label="Location" {...this.a11yProps(0)} />
@@ -293,73 +262,99 @@ class SearchFacility extends Component {
               <Grid item xs={9}>
                 <Paper className={classes.paper}>
                  <div>
-
                    <div className={classes.caseGrid}>
                      {this.state.facility_location.title}
                      <hr className={classes.hr}/>
                    </div>
                  </div>
-                 <div className={classes.facilityFilterOutLine}>
-                   <div>
-                     <div className={classes.facilityType}>
-                     <FormControl className={classes.formControl}>
-                      <InputLabel id="demo-simple-select-label">Keph Level</InputLabel>
-                      <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        name="keph_level_value"
-                        value={this.state.keph_level_value}
-                        onChange={this.handleChange}
-                      >
-                      {
-                        this.state.keph_level.map(v =>
-                          <MenuItem value={v.id}>{v.name}</MenuItem>
-                        )
-                      }
-                      </Select>
-                    </FormControl>
-
-                     <FormControl className={classes.formControl}>
-                      <InputLabel id="demo-simple-select-label">Facility Owner</InputLabel>
-                      <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={this.state.facility_owner_value}
-                        name="facility_owner_value"
-                        onChange={this.handleChange}
-                      >
-                      {
-                        this.state.facility_owner.map(v =>
-                          <MenuItem value={v.id}>{v.name}</MenuItem>
-                        )
-                      }
-                      </Select>
-                    </FormControl>
-
+                 <Grid container spacing={3}>
+                   <Grid item xs={12} sm={6}>
+                     <Paper className={classes.paper}>
+                       <FormControl className={classes.formControl}>
+                        <InputLabel id="demo-simple-select-label">Keph Level</InputLabel>
+                        <Select
+                          labelId="demo-simple-select-label"
+                          id="demo-simple-select"
+                          name="keph_level_value"
+                          value={this.state.keph_level_value}
+                          onChange={this.handleChange}
+                        >
+                        {
+                          this.state.keph_level.map(v =>
+                            <MenuItem value={v.name}>{v.name}</MenuItem>
+                          )
+                        }
+                        </Select>
+                      </FormControl>
+                     </Paper>
+                   </Grid>
+                   <Grid item xs={12} sm={6}>
+                     <Paper className={classes.paper}>
+                       <FormControl className={classes.formControl}>
+                        <InputLabel id="demo-simple-select-label">Facility Owner</InputLabel>
+                        <Select
+                          labelId="demo-simple-select-label"
+                          id="demo-simple-select"
+                          value={this.state.facility_owner_value}
+                          name="facility_owner_value"
+                          onChange={this.handleChange}
+                        >
+                        {
+                          this.state.facility_owner.map(v =>
+                            <MenuItem value={v.name}>{v.name}</MenuItem>
+                          )
+                        }
+                        </Select>
+                        </FormControl>
+                     </Paper>
+                   </Grid>
+                   <Grid item xs={12} sm={6}>
+                     <Paper className={classes.paper}>
                        <FormControl className={classes.formControl}>
                         <InputLabel id="demo-simple-select-label">Facility Type</InputLabel>
                         <Select
                           labelId="demo-simple-select-label"
                           id="demo-simple-select"
-                          value={this.minute}
-                          onChange={this.handleMinuteChange}
+                          value={this.state.facility_type_value}
+                          name="facility_type_value"
+                          onChange={this.handleChange}
                         >
-                          <MenuItem value={10}>Ten</MenuItem>
-                          <MenuItem value={20}>Twenty</MenuItem>
-                          <MenuItem value={30}>Thirty</MenuItem>
+                        {
+                          this.state.facility_type.map(v =>
+                            <MenuItem value={v.name}>{v.name}</MenuItem>
+                          )
+                        }
                         </Select>
                       </FormControl>
-                     <FormControl>
-                         <InputLabel htmlFor="radius">Radius in (KM)</InputLabel>
-                         <Input id="radius"
-                          value={this.minute}
-                          type="number"
-                          defaultValue={this.minute}
-                          onChange={this.handleMinuteChange} />
-                       </FormControl>
-                      </div>
-                   </div>
-                 </div>
+                     </Paper>
+                   </Grid>
+                   <Grid item xs={12} sm={6}>
+                    <Grid container spacing={2}>
+                     <Grid item xs={12} sm={6}>
+                       <Paper className={classes.paper}>
+                         <FormControl className={classes.formControl}>
+                             <InputLabel htmlFor="radius">Radius in (KM)</InputLabel>
+                             <Input id="radius-id"
+                              defaultValue={this.state.radius}
+                              type="number"
+                              name="radius"
+                              onChange={this.handleChange}/>
+                           </FormControl>
+                        </Paper>
+                      </Grid>
+                      <Grid item xs={6} sm={3}>
+                        <Paper className={classes.paper}>
+                           <Button
+                              variant="outlined" size="small"
+                              color="primary" className={classes.searchButton}
+                              onClick={this.searchFacility}>
+                              Search Facility
+                          </Button>
+                        </Paper>
+                    </Grid>
+                    </Grid>
+                   </Grid>
+                 </Grid>
                  <div
                   key={btoa(Math.random()).substring(0,12)}
                   className={classes.maps}>
